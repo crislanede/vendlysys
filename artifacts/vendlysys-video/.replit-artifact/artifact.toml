@@ -1,0 +1,31 @@
+kind = "video"
+previewPath = "/vendlysys-video/"
+title = "VendlySys - Vídeo Promocional"
+version = "1.0.0"
+id = "artifacts/vendlysys-video"
+router = "path"
+
+[[integratedSkills]]
+name = "video-js"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/vendlysys-video/" ]
+localPort = 23911
+
+[services.development]
+run = "pnpm --filter @workspace/vendlysys-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vendlysys-video", "run", "build" ]
+publicDir = "artifacts/vendlysys-video/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23911"
+BASE_PATH = "/vendlysys-video/"

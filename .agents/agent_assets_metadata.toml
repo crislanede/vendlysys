@@ -1,0 +1,50 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "yfpc16XQkA5ujwwkOSbrR"
+uri = "file://icon-512-playstore.png"
+type = "image"
+title = "Ícone do app — 512×512px (Play Store)"
+
+[[outputs]]
+id = "rZoSRjnGmKwWCMrIe27No"
+uri = "file://feature-graphic-playstore.png"
+type = "image"
+title = "Recurso gráfico — 1024×500px (Play Store)"
+
+[[outputs]]
+id = "GDbP03gvNkEg9_LNsjGP9"
+uri = "file://screenshots/playstore-1-login.jpg"
+type = "image"
+title = "Screenshot 1 — Login"
+
+[[outputs]]
+id = "pkjC9oDcWC5uo_uEsY__m"
+uri = "file://screenshots/playstore-2-agenda.jpg"
+type = "image"
+title = "Screenshot 2 — Agenda"
+
+[[outputs]]
+id = "PPXoUFQ1J1LUnwElgPD7s"
+uri = "file://screenshots/playstore-3-pagamento.jpg"
+type = "image"
+title = "Screenshot 3 — Pagamento"
+
+[[outputs]]
+id = "SGVWU1JIN-uXK1yCyi0OY"
+uri = "file://screenshots/playstore-4-clientes.jpg"
+type = "image"
+title = "Screenshot 4 — Clientes"
+
+[[outputs]]
+id = "qcwGv26uP3qMllE2_mo7Q"
+uri = "file://artifacts/vendlysys-video/public/images/barbershop_1.jpg"
+type = "image"
+title = "modern barbershop interior salon premium lighting"
+
+[[outputs]]
+id = "2feHGtMXCtl7z62JwO7Pe"
+uri = "file://artifacts/vendlysys-video/public/images/barbershop_2.jpg"
+type = "image"
+title = "modern barbershop interior salon premium lighting"

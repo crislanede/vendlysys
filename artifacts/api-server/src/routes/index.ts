@@ -1,0 +1,44 @@
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import authRouter from "./auth";
+import empresasRouter from "./empresas";
+import usuariosRouter from "./usuarios";
+import clientesRouter from "./clientes";
+import agendamentosRouter from "./agendamentos";
+import financeiroRouter from "./financeiro";
+import despesasRouter from "./despesas";
+import dashboardRouter from "./dashboard";
+import portalRouter from "./portal";
+import servicosRouter from "./servicos";
+import pagamentosRouter from "./pagamentos";
+import whatsappRouter from "./whatsapp";
+import profissionaisRouter from "./profissionais";
+import pushTokenRouter from "./push-token";
+import assinaturaRouter from "./assinatura";
+import sinaisRouter from "./sinais";
+import bloqueiosRouter from "./bloqueios";
+import adminRouter from "./admin";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(authRouter);
+router.use(portalRouter);
+router.use(empresasRouter);
+router.use(usuariosRouter);
+router.use(clientesRouter);
+router.use(agendamentosRouter);
+router.use(financeiroRouter);
+router.use(despesasRouter);
+router.use(dashboardRouter);
+router.use(servicosRouter);
+router.use(pagamentosRouter);
+router.use(whatsappRouter);
+router.use(profissionaisRouter);
+router.use(pushTokenRouter);
+router.use(assinaturaRouter);
+router.use(sinaisRouter);
+router.use(bloqueiosRouter);
+router.use(adminRouter);
+
+export default router;

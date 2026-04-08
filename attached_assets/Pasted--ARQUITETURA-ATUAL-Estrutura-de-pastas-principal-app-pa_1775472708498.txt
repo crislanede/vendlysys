@@ -1,0 +1,286 @@
+🧠 ARQUITETURA ATUAL
+Estrutura de pastas (principal)
+app/
+  (painel)/
+    agenda/
+    agendamentos/
+    clientes/
+    dashboard/
+    financeiro/
+    usuarios/
+    onboarding/
+    inicio/
+    layout.tsx
+
+  api/
+    usuarios/
+      reset-senha/
+        route.ts
+
+lib/
+  supabase.ts
+  useSessaoEmpresa.ts
+  temaEmpresa.ts
+
+components/
+  ProtegePagina.tsx
+  ProtegeOnboarding.tsx
+  HeaderGlobal.tsx
+  ui/
+    AppShell.tsx
+    HeroHeader.tsx
+
+styles/
+  tema.ts
+🏢 MULTIEMPRESA (BASE DO SISTEMA)
+Conceito
+
+Cada usuário pertence a uma empresa:
+
+empresa_id
+slug (url amigável)
+tema próprio (cores + logo)
+Hook principal
+useSessaoEmpresa()
+
+Retorna:
+
+{
+  empresa,
+  usuario,
+  perfil,
+  loading
+}
+🔐 CONTROLE DE ACESSO
+Perfis
+admin
+
+Acesso total:
+
+dashboard
+financeiro
+usuários
+configurações
+agenda
+
+Acesso limitado:
+
+agenda
+agendamentos
+Proteção de páginas
+1. Login
+<ProtegePagina>
+2. Onboarding
+<ProtegeOnboarding>
+🎨 TEMA DINÂMICO (POR EMPRESA)
+Base
+getTemaEmpresa(empresa)
+
+Retorna:
+
+{
+  corPrimaria,
+  corSecundaria,
+  logo_url
+}
+Aplicação
+botões → botaoPrimarioTema
+cards → cardTema
+badges → badgeTema
+
+✔ Já aplicado no:
+
+onboarding
+financeiro
+início
+parcialmente na agenda
+📊 TELAS IMPLEMENTADAS
+🟣 ONBOARDING
+
+Função:
+
+configurar empresa
+cores
+logo
+slug
+
+Problemas tratados:
+
+upload de logo
+multiempresa
+persistência
+🟢 INÍCIO (HOME DO SISTEMA)
+
+Função:
+
+central de módulos
+
+Mostra:
+
+nome da empresa
+perfil do usuário
+módulos disponíveis
+
+⚠️ Ajuste feito:
+
+corrigido erro "usuário sem vínculo com empresa"
+🔵 AGENDA
+
+Função:
+
+operação diária
+
+Tem:
+
+filtro por período
+listagem de agendamentos
+
+⚠️ Pendente:
+
+padronizar com tema do onboarding
+🟡 DASHBOARD
+
+Função:
+
+visão gerencial
+
+Deve conter:
+
+gráficos
+comparações (ano / semestre)
+indicadores
+
+👉 Diferente do financeiro
+
+🟠 FINANCEIRO (PRONTO)
+
+Função:
+
+operação financeira
+Possui:
+
+✔ Filtros:
+
+período
+status pagamento
+forma pagamento
+profissional
+
+✔ Indicadores:
+
+total cobrado
+total recebido
+total pendente
+pagos vs pendentes
+
+✔ Caixa:
+
+resumo do período
+
+✔ Lista financeira:
+
+cliente
+serviço
+valor
+pago
+saldo
+
+✔ Agrupamento:
+
+por forma de pagamento
+⚠️ PROBLEMA IMPORTANTE QUE RESOLVEMOS
+Supabase retornando relacionamento inconsistente
+
+Erro:
+
+Property 'nome' does not exist...
+Solução aplicada
+Tipo:
+type RelacaoNome = { nome: string } | { nome: string }[] | null
+Helper:
+function getNomeRelacao(relacao?: RelacaoNome) {
+  if (!relacao) return ''
+  if (Array.isArray(relacao)) return relacao[0]?.nome || ''
+  return relacao.nome || ''
+}
+
+✔ Isso resolve TODOS os erros de relacionamento
+
+👥 USUÁRIOS (ADMIN)
+
+Você implementou:
+
+Tela de usuários
+
+Admin pode:
+
+criar usuários
+definir perfil (admin / agenda)
+Reset de senha
+
+API criada:
+
+app/api/usuarios/reset-senha/route.ts
+🔙 BOTÃO VOLTAR PARA INÍCIO
+
+Criado:
+
+VoltarInicio.tsx
+
+✔ Usado nas páginas internas
+
+🧩 COMPONENTES BASE
+AppShell
+estrutura geral da página
+HeroHeader
+cabeçalho padrão
+HeaderGlobal
+menu principal (em evolução)
+🧭 REGRAS DE NEGÓCIO IMPORTANTES
+
+✔ Apenas ADMIN:
+
+financeiro
+dashboard
+usuários
+configurações
+
+✔ Usuário agenda:
+
+NÃO vê financeiro
+NÃO vê dashboard
+📌 O QUE FALTA / PRÓXIMOS PASSOS
+🔥 Alta prioridade
+Menu por perfil no HeaderGlobal
+Padronizar tema em TODAS as telas (agenda principalmente)
+Dashboard com gráficos reais
+💰 Financeiro (evolução)
+marcar pagamento manual
+editar forma de pagamento
+lançar despesas
+fechamento de caixa
+📊 Dashboard
+gráficos por mês
+comparação ano vs ano
+crescimento
+ticket médio
+🔐 Segurança
+garantir empresa_id em TODAS queries
+proteger rotas por perfil
+🧠 RESUMO FINAL
+
+Você já tem:
+
+✔ Base SaaS multiempresa funcionando
+✔ Onboarding completo
+✔ Sistema de agenda
+✔ Financeiro operacional completo
+✔ Controle de usuários e perfis
+✔ Tema por empresa
+✔ Estrutura pronta para escalar
+
+Se você quiser continuar no próximo chat, pode simplesmente colar:
+
+"Estou continuando o VendlySys (Next + Supabase SaaS multiempresa). Já tenho onboarding, agenda, financeiro e controle de usuários. Quero evoluir o dashboard com gráficos e regras por perfil."
+
+E a gente segue direto de onde parou 🚀

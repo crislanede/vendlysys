@@ -1,0 +1,1166 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: VendlySys - SaaS multiempresa para salões e clínicas
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Autenticação e sessão
+  - name: empresas
+    description: Gerenciamento de empresas
+  - name: usuarios
+    description: Gerenciamento de usuários
+  - name: clientes
+    description: Gerenciamento de clientes
+  - name: agendamentos
+    description: Agendamentos e agenda
+  - name: financeiro
+    description: Módulo financeiro
+  - name: despesas
+    description: Lançamento de despesas
+  - name: dashboard
+    description: Indicadores e gráficos
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login do usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login bem-sucedido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Credenciais inválidas
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout do usuário
+      responses:
+        "200":
+          description: Logout realizado
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Dados do usuário logado
+      responses:
+        "200":
+          description: Usuário atual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsuarioComEmpresa"
+        "401":
+          description: Não autenticado
+
+  /empresas/{id}:
+    get:
+      operationId: getEmpresa
+      tags: [empresas]
+      summary: Busca empresa por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Empresa encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empresa"
+    put:
+      operationId: updateEmpresa
+      tags: [empresas]
+      summary: Atualiza empresa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmpresaBody"
+      responses:
+        "200":
+          description: Empresa atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empresa"
+
+  /usuarios:
+    get:
+      operationId: listUsuarios
+      tags: [usuarios]
+      summary: Lista usuários da empresa
+      responses:
+        "200":
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Usuario"
+    post:
+      operationId: createUsuario
+      tags: [usuarios]
+      summary: Cria novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUsuarioBody"
+      responses:
+        "201":
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usuario"
+
+  /usuarios/{id}:
+    put:
+      operationId: updateUsuario
+      tags: [usuarios]
+      summary: Atualiza usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUsuarioBody"
+      responses:
+        "200":
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usuario"
+    delete:
+      operationId: deleteUsuario
+      tags: [usuarios]
+      summary: Remove usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Usuário removido
+
+  /usuarios/{id}/reset-senha:
+    post:
+      operationId: resetSenhaUsuario
+      tags: [usuarios]
+      summary: Redefine senha do usuário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetSenhaBody"
+      responses:
+        "200":
+          description: Senha redefinida
+
+  /clientes:
+    get:
+      operationId: listClientes
+      tags: [clientes]
+      summary: Lista clientes da empresa
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cliente"
+    post:
+      operationId: createCliente
+      tags: [clientes]
+      summary: Cria novo cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClienteBody"
+      responses:
+        "201":
+          description: Cliente criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+
+  /clientes/{id}:
+    get:
+      operationId: getCliente
+      tags: [clientes]
+      summary: Busca cliente por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+    put:
+      operationId: updateCliente
+      tags: [clientes]
+      summary: Atualiza cliente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClienteBody"
+      responses:
+        "200":
+          description: Cliente atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+    delete:
+      operationId: deleteCliente
+      tags: [clientes]
+      summary: Remove cliente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Cliente removido
+
+  /agendamentos:
+    get:
+      operationId: listAgendamentos
+      tags: [agendamentos]
+      summary: Lista agendamentos da empresa
+      parameters:
+        - name: data_inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: profissional_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [agendado, confirmado, concluido, cancelado]
+      responses:
+        "200":
+          description: Lista de agendamentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Agendamento"
+    post:
+      operationId: createAgendamento
+      tags: [agendamentos]
+      summary: Cria novo agendamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgendamentoBody"
+      responses:
+        "201":
+          description: Agendamento criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agendamento"
+
+  /agendamentos/{id}:
+    get:
+      operationId: getAgendamento
+      tags: [agendamentos]
+      summary: Busca agendamento por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Agendamento encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agendamento"
+    put:
+      operationId: updateAgendamento
+      tags: [agendamentos]
+      summary: Atualiza agendamento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAgendamentoBody"
+      responses:
+        "200":
+          description: Agendamento atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agendamento"
+    delete:
+      operationId: deleteAgendamento
+      tags: [agendamentos]
+      summary: Cancela agendamento
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Agendamento cancelado
+
+  /financeiro:
+    get:
+      operationId: listLancamentos
+      tags: [financeiro]
+      summary: Lista lançamentos financeiros
+      parameters:
+        - name: data_inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: status_pagamento
+          in: query
+          schema:
+            type: string
+            enum: [pendente, pago, cancelado]
+        - name: forma_pagamento
+          in: query
+          schema:
+            type: string
+            enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        - name: profissional_id
+          in: query
+          schema:
+            type: integer
+        - name: tipo
+          in: query
+          schema:
+            type: string
+            enum: [receita, despesa]
+      responses:
+        "200":
+          description: Lista de lançamentos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lancamento"
+
+  /financeiro/{id}:
+    put:
+      operationId: updateLancamento
+      tags: [financeiro]
+      summary: Atualiza lançamento financeiro
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLancamentoBody"
+      responses:
+        "200":
+          description: Lançamento atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lancamento"
+
+  /financeiro/{id}/pagar:
+    post:
+      operationId: marcarPago
+      tags: [financeiro]
+      summary: Marca lançamento como pago
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarcarPagoBody"
+      responses:
+        "200":
+          description: Marcado como pago
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lancamento"
+
+  /despesas:
+    get:
+      operationId: listDespesas
+      tags: [despesas]
+      summary: Lista despesas da empresa
+      parameters:
+        - name: data_inicio
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: categoria
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de despesas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Despesa"
+    post:
+      operationId: createDespesa
+      tags: [despesas]
+      summary: Lança nova despesa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDespesaBody"
+      responses:
+        "201":
+          description: Despesa criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Despesa"
+
+  /despesas/{id}:
+    put:
+      operationId: updateDespesa
+      tags: [despesas]
+      summary: Atualiza despesa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDespesaBody"
+      responses:
+        "200":
+          description: Despesa atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Despesa"
+    delete:
+      operationId: deleteDespesa
+      tags: [despesas]
+      summary: Remove despesa
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Despesa removida
+
+  /caixa/fechamento:
+    get:
+      operationId: getFechamentoCaixa
+      tags: [financeiro]
+      summary: Resumo de fechamento de caixa do período
+      parameters:
+        - name: data_inicio
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: data_fim
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Resumo do caixa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FechamentoCaixa"
+
+  /dashboard/resumo:
+    get:
+      operationId: getDashboardResumo
+      tags: [dashboard]
+      summary: Resumo geral para o dashboard
+      parameters:
+        - name: mes
+          in: query
+          schema:
+            type: integer
+        - name: ano
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Resumo do dashboard
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResumo"
+
+  /dashboard/graficos:
+    get:
+      operationId: getDashboardGraficos
+      tags: [dashboard]
+      summary: Dados para gráficos do dashboard
+      parameters:
+        - name: ano
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Dados dos gráficos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardGraficos"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+      required: [email, senha]
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        usuario:
+          $ref: "#/components/schemas/UsuarioComEmpresa"
+      required: [token, usuario]
+
+    UsuarioComEmpresa:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        perfil:
+          type: string
+          enum: [admin, agenda]
+        empresa_id:
+          type: integer
+        empresa:
+          $ref: "#/components/schemas/Empresa"
+      required: [id, nome, email, perfil, empresa_id]
+
+    Empresa:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        slug:
+          type: string
+        cor_primaria:
+          type: string
+        cor_secundaria:
+          type: string
+        logo_url:
+          type: string
+        telefone:
+          type: string
+        endereco:
+          type: string
+      required: [id, nome, slug]
+
+    UpdateEmpresaBody:
+      type: object
+      properties:
+        nome:
+          type: string
+        cor_primaria:
+          type: string
+        cor_secundaria:
+          type: string
+        logo_url:
+          type: string
+        telefone:
+          type: string
+        endereco:
+          type: string
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        perfil:
+          type: string
+          enum: [admin, agenda]
+        empresa_id:
+          type: integer
+        ativo:
+          type: boolean
+      required: [id, nome, email, perfil, empresa_id, ativo]
+
+    CreateUsuarioBody:
+      type: object
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+          format: email
+        senha:
+          type: string
+        perfil:
+          type: string
+          enum: [admin, agenda]
+      required: [nome, email, senha, perfil]
+
+    UpdateUsuarioBody:
+      type: object
+      properties:
+        nome:
+          type: string
+        perfil:
+          type: string
+          enum: [admin, agenda]
+        ativo:
+          type: boolean
+
+    ResetSenhaBody:
+      type: object
+      properties:
+        nova_senha:
+          type: string
+      required: [nova_senha]
+
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        empresa_id:
+          type: integer
+        data_nascimento:
+          type: string
+          format: date
+        observacoes:
+          type: string
+        total_agendamentos:
+          type: integer
+        total_gasto:
+          type: number
+      required: [id, nome, empresa_id]
+
+    CreateClienteBody:
+      type: object
+      properties:
+        nome:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+          format: email
+        data_nascimento:
+          type: string
+          format: date
+        observacoes:
+          type: string
+      required: [nome]
+
+    Agendamento:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        cliente_id:
+          type: integer
+        cliente_nome:
+          type: string
+        profissional_id:
+          type: integer
+        profissional_nome:
+          type: string
+        servico:
+          type: string
+        data:
+          type: string
+          format: date
+        hora_inicio:
+          type: string
+        hora_fim:
+          type: string
+        valor:
+          type: number
+        status:
+          type: string
+          enum: [agendado, confirmado, concluido, cancelado]
+        observacoes:
+          type: string
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        pago:
+          type: boolean
+      required: [id, empresa_id, servico, data, hora_inicio, status]
+
+    CreateAgendamentoBody:
+      type: object
+      properties:
+        cliente_id:
+          type: integer
+        profissional_id:
+          type: integer
+        servico:
+          type: string
+        data:
+          type: string
+          format: date
+        hora_inicio:
+          type: string
+        hora_fim:
+          type: string
+        valor:
+          type: number
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        observacoes:
+          type: string
+      required: [servico, data, hora_inicio]
+
+    UpdateAgendamentoBody:
+      type: object
+      properties:
+        cliente_id:
+          type: integer
+        profissional_id:
+          type: integer
+        servico:
+          type: string
+        data:
+          type: string
+          format: date
+        hora_inicio:
+          type: string
+        hora_fim:
+          type: string
+        valor:
+          type: number
+        status:
+          type: string
+          enum: [agendado, confirmado, concluido, cancelado]
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        pago:
+          type: boolean
+        observacoes:
+          type: string
+
+    Lancamento:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        agendamento_id:
+          type: integer
+        cliente_nome:
+          type: string
+        profissional_nome:
+          type: string
+        servico:
+          type: string
+        data:
+          type: string
+          format: date
+        valor:
+          type: number
+        valor_pago:
+          type: number
+        desconto:
+          type: number
+        status_pagamento:
+          type: string
+          enum: [pendente, pago, cancelado]
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        tipo:
+          type: string
+          enum: [receita, despesa]
+        observacoes:
+          type: string
+      required: [id, empresa_id, servico, data, valor, status_pagamento, tipo]
+
+    UpdateLancamentoBody:
+      type: object
+      properties:
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        desconto:
+          type: number
+        observacoes:
+          type: string
+
+    MarcarPagoBody:
+      type: object
+      properties:
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        valor_pago:
+          type: number
+        observacoes:
+          type: string
+      required: [forma_pagamento]
+
+    Despesa:
+      type: object
+      properties:
+        id:
+          type: integer
+        empresa_id:
+          type: integer
+        descricao:
+          type: string
+        categoria:
+          type: string
+          enum: [aluguel, produto, funcionario, marketing, equipamento, outros]
+        valor:
+          type: number
+        data:
+          type: string
+          format: date
+        pago:
+          type: boolean
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        observacoes:
+          type: string
+      required: [id, empresa_id, descricao, categoria, valor, data]
+
+    CreateDespesaBody:
+      type: object
+      properties:
+        descricao:
+          type: string
+        categoria:
+          type: string
+          enum: [aluguel, produto, funcionario, marketing, equipamento, outros]
+        valor:
+          type: number
+        data:
+          type: string
+          format: date
+        pago:
+          type: boolean
+        forma_pagamento:
+          type: string
+          enum: [dinheiro, pix, cartao_credito, cartao_debito, transferencia]
+        observacoes:
+          type: string
+      required: [descricao, categoria, valor, data]
+
+    FechamentoCaixa:
+      type: object
+      properties:
+        data_inicio:
+          type: string
+          format: date
+        data_fim:
+          type: string
+          format: date
+        total_receitas:
+          type: number
+        total_despesas:
+          type: number
+        total_recebido:
+          type: number
+        total_pendente:
+          type: number
+        saldo_periodo:
+          type: number
+        qtd_atendimentos:
+          type: integer
+        ticket_medio:
+          type: number
+        por_forma_pagamento:
+          type: array
+          items:
+            type: object
+            properties:
+              forma:
+                type: string
+              total:
+                type: number
+              quantidade:
+                type: integer
+            required: [forma, total, quantidade]
+      required: [data_inicio, data_fim, total_receitas, total_despesas, total_recebido, total_pendente, saldo_periodo, qtd_atendimentos, ticket_medio, por_forma_pagamento]
+
+    DashboardResumo:
+      type: object
+      properties:
+        mes:
+          type: integer
+        ano:
+          type: integer
+        total_agendamentos:
+          type: integer
+        agendamentos_concluidos:
+          type: integer
+        agendamentos_cancelados:
+          type: integer
+        receita_total:
+          type: number
+        receita_recebida:
+          type: number
+        receita_pendente:
+          type: number
+        despesas_total:
+          type: number
+        lucro_liquido:
+          type: number
+        novos_clientes:
+          type: integer
+        ticket_medio:
+          type: number
+      required: [mes, ano, total_agendamentos, agendamentos_concluidos, agendamentos_cancelados, receita_total, receita_recebida, receita_pendente, despesas_total, lucro_liquido, novos_clientes, ticket_medio]
+
+    DashboardGraficos:
+      type: object
+      properties:
+        ano:
+          type: integer
+        receita_por_mes:
+          type: array
+          items:
+            type: object
+            properties:
+              mes:
+                type: integer
+              mes_nome:
+                type: string
+              receita:
+                type: number
+              despesas:
+                type: number
+              lucro:
+                type: number
+            required: [mes, mes_nome, receita, despesas, lucro]
+        agendamentos_por_mes:
+          type: array
+          items:
+            type: object
+            properties:
+              mes:
+                type: integer
+              mes_nome:
+                type: string
+              total:
+                type: integer
+              concluidos:
+                type: integer
+            required: [mes, mes_nome, total, concluidos]
+        top_servicos:
+          type: array
+          items:
+            type: object
+            properties:
+              servico:
+                type: string
+              quantidade:
+                type: integer
+              receita:
+                type: number
+            required: [servico, quantidade, receita]
+        top_profissionais:
+          type: array
+          items:
+            type: object
+            properties:
+              nome:
+                type: string
+              atendimentos:
+                type: integer
+              receita:
+                type: number
+            required: [nome, atendimentos, receita]
+      required: [ano, receita_por_mes, agendamentos_por_mes, top_servicos, top_profissionais]
