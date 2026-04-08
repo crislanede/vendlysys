@@ -4,11 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
 export default defineConfig({
-  base: "/", // 🔥 IMPORTANTE pra Vercel
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  base: "/",
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -17,7 +14,7 @@ export default defineConfig({
   },
   root: path.resolve(__dirname),
   build: {
-    outDir: path.resolve(__dirname, "dist"),
+    outDir: "dist",
     emptyOutDir: true,
   },
   server: {
